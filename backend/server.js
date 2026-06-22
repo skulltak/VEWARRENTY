@@ -5,13 +5,12 @@ const connectDB = require('./config/db');
 const salesRoutes = require('./routes/sales');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
+// Connect to MongoDB (uses cached connection in serverless environments)
 connectDB();
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:5173' })); // Allow Vite frontend
+app.use(cors());
 app.use(express.json());
 
 // Routes
@@ -22,6 +21,12 @@ app.get('/', (req, res) => {
   res.json({ status: 'vewarrenty backend running ✅' });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+// Only start listening when run locally (not on Vercel)
+if (process.env.VERCEL !== '1') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
