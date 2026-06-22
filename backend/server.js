@@ -6,12 +6,20 @@ const salesRoutes = require('./routes/sales');
 
 const app = express();
 
-// Connect to MongoDB (uses cached connection in serverless environments)
-connectDB();
-
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// ✅ Await DB connection before every request (safe for serverless)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('DB connection failed:', err.message);
+    res.status(500).json({ message: 'Database connection failed.', error: err.message });
+  }
+});
 
 // Routes
 app.use('/api/sales', salesRoutes);

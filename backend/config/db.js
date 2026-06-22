@@ -17,9 +17,7 @@ const connectDB = async () => {
   // Wait for an in-flight connection attempt if one is already running
   if (!cached.promise) {
     cached.promise = mongoose
-      .connect(process.env.MONGO_URI, {
-        bufferCommands: false,
-      })
+      .connect(process.env.MONGO_URI)
       .then((mongoose) => {
         console.log(`✅ MongoDB Connected: ${mongoose.connection.host}`);
         return mongoose;
