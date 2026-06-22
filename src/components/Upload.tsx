@@ -46,10 +46,11 @@ export const Upload: React.FC<UploadProps> = ({ onUploadSuccess }) => {
         setFile(null);
         onUploadSuccess?.();
       } else {
-        setResult({ success: false, message: data.message || 'Upload failed.' });
+        setResult({ success: false, message: (data.message || 'Upload failed.') + (data.error ? ` — ${data.error}` : '') });
       }
-    } catch {
-      setResult({ success: false, message: 'Could not connect to backend server.' });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setResult({ success: false, message: `Could not connect to backend server. ${msg}` });
     } finally {
       setIsUploading(false);
     }
